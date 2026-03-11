@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRecordDto } from './dto/create-record.dto';
 import { UpdateRecordDto } from './dto/update-record.dto';
@@ -7,27 +11,55 @@ import { UpdateRecordDto } from './dto/update-record.dto';
 export class RecordsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.product.findMany({ orderBy: { createdAt: 'desc' } });
+  findAll(userId: string) {
+    return this.prisma.product.findMany({
+      where: { ownerId: userId },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  async findOne(id: string) {
-    const product = await this.prisma.product.findUnique({ where: { id } });
+  async findOne(id: string, userId: string) {
+    const product = await this.prisma.product.findFirst({
+      where: { id, ownerId: userId },
+    });
     if (!product) throw new NotFoundException(`Product #${id} not found`);
     return product;
   }
 
-  create(dto: CreateRecordDto) {
-    return this.prisma.product.create({ data: dto });
+  create(dto: CreateRecordDto, userId: string) {
+    return this.prisma.product.create({
+      data: {
+        ...dto,
+        ownerId: userId,
+      },
+    });
   }
 
-  async update(id: string, dto: UpdateRecordDto) {
-    await this.findOne(id);
+  async update(id: string, dto: UpdateRecordDto, userId: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      select: { ownerId: true },
+    });
+
+    if (!product) throw new NotFoundException(`Product #${id} not found`);
+    if (product.ownerId !== userId) {
+      throw new ForbiddenException('You are not allowed to modify this product');
+    }
+
     return this.prisma.product.update({ where: { id }, data: dto });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, userId: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      select: { ownerId: true },
+    });
+
+    if (!product) throw new NotFoundException(`Product #${id} not found`);
+    if (product.ownerId !== userId) {
+      throw new ForbiddenException('You are not allowed to delete this product');
+    }
+
     return this.prisma.product.delete({ where: { id } });
   }
 }

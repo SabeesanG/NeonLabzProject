@@ -81,22 +81,31 @@ export default function DashboardPage() {
     try {
       const res = await api.get('/records');
       setProducts(res.data);
-    } catch {
+    } catch (err: unknown) {
+      const status =
+        typeof err === 'object' &&
+        err !== null &&
+        'response' in err &&
+        typeof (err as { response?: { status?: number } }).response?.status ===
+          'number'
+          ? (err as { response: { status: number } }).response.status
+          : undefined;
+
+      if (status === 401) {
+        router.push('/login');
+        return;
+      }
+
       setError('Failed to load products. Are you logged in?');
       toast.error('Failed to load products');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
     fetchProducts();
-  }, [router, fetchProducts]);
+  }, [fetchProducts]);
 
   const handleCreate = async (data: ProductFormData) => {
     try {
@@ -116,7 +125,7 @@ export default function DashboardPage() {
   const handleUpdate = async (data: ProductFormData) => {
     if (!editingProduct) return;
     try {
-      const res = await api.put(`/records/${editingProduct.id}`, {
+      const res = await api.patch(`/records/${editingProduct.id}`, {
         ...data,
         price: parseFloat(data.price),
       });

@@ -2,13 +2,20 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import api from '@/lib/api';
 
 export default function Navbar() {
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      toast.error('Logout request failed, continuing');
+    } finally {
+      router.push('/login');
+    }
   };
 
   return (
