@@ -15,7 +15,7 @@ interface Product {
 interface Props {
   products: Product[];
   onEdit: (product: Product) => void;
-  onDelete: (id: string) => void;
+  onDelete: (product: Product) => void;
   onAddProduct: () => void;
 }
 
@@ -24,18 +24,11 @@ type ViewMode = 'table' | 'cards' | 'pinpoint';
 export default function ProductViews({ products, onEdit, onDelete, onAddProduct }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const selectedProduct = useMemo(
     () => products.find((p) => p.id === selectedId) ?? products[0] ?? null,
     [products, selectedId],
   );
-
-  const handleDelete = async (id: string) => {
-    setDeletingId(id);
-    await onDelete(id);
-    setDeletingId(null);
-  };
 
   return (
     <section className="space-y-4">
@@ -132,11 +125,10 @@ export default function ProductViews({ products, onEdit, onDelete, onAddProduct 
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleDelete(p.id)}
-                    disabled={deletingId === p.id}
-                    className="rounded-md bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100 disabled:opacity-50"
+                    onClick={() => onDelete(p)}
+                    className="rounded-md bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100"
                   >
-                    {deletingId === p.id ? 'Deleting…' : 'Delete'}
+                    Delete
                   </button>
                 </div>
               </article>
@@ -231,11 +223,10 @@ export default function ProductViews({ products, onEdit, onDelete, onAddProduct 
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleDelete(selectedProduct.id)}
-                    disabled={deletingId === selectedProduct.id}
-                    className="rounded-md bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100 disabled:opacity-50"
+                    onClick={() => onDelete(selectedProduct)}
+                    className="rounded-md bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100"
                   >
-                    {deletingId === selectedProduct.id ? 'Deleting…' : 'Delete This Product'}
+                    Delete This Product
                   </button>
                 </div>
               </>

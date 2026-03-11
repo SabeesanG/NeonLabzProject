@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { formatCurrency, formatDate } from '@/lib/format';
 
 interface Product {
@@ -14,19 +13,11 @@ interface Product {
 interface Props {
   products: Product[];
   onEdit: (product: Product) => void;
-  onDelete: (id: string) => void;
+  onDelete: (product: Product) => void;
   onAddProduct: () => void;
 }
 
 export default function ProductTable({ products, onEdit, onDelete, onAddProduct }: Props) {
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const handleDelete = async (id: string) => {
-    setDeletingId(id);
-    await onDelete(id);
-    setDeletingId(null);
-  };
-
   if (products.length === 0) {
     return (
       <div className="animate-fade-in-up rounded-xl border border-slate-300 bg-white/88 px-6 py-14 text-center shadow-sm backdrop-blur-[2px]">
@@ -75,11 +66,10 @@ export default function ProductTable({ products, onEdit, onDelete, onAddProduct 
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(p.id)}
-                  disabled={deletingId === p.id}
+                  onClick={() => onDelete(p)}
                   className="font-medium text-red-500 transition-colors hover:text-red-400 disabled:opacity-50"
                 >
-                  {deletingId === p.id ? 'Deleting…' : 'Delete'}
+                  Delete
                 </button>
               </td>
             </tr>

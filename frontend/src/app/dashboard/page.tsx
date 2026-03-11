@@ -73,6 +73,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Product | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -141,14 +143,29 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDeleteRequest = (product: Product) => {
+    setPendingDelete(product);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDelete) return;
+
     try {
-      await api.delete(`/records/${id}`);
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setIsDeleting(true);
+      await api.delete(`/records/${pendingDelete.id}`);
+      setProducts((prev) => prev.filter((p) => p.id !== pendingDelete.id));
+      setPendingDelete(null);
       toast.success('Product deleted successfully');
     } catch {
       toast.error('Failed to delete product');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleCancelDelete = () => {
+    if (isDeleting) return;
+    setPendingDelete(null);
   };
 
   const handleEdit = (product: Product) => {
@@ -200,13 +217,45 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {pendingDelete && (
+          <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-4 text-sm text-amber-900 shadow-sm">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-semibold">Delete pending</p>
+                <p className="mt-1">
+                  You are about to delete <span className="font-semibold">{pendingDelete.name}</span>.
+                  This action cannot be undone.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleCancelDelete}
+                  disabled={isDeleting}
+                  className="rounded-lg border border-amber-300 bg-white px-4 py-2 font-semibold text-amber-900 transition hover:bg-amber-100 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmDelete}
+                  disabled={isDeleting}
+                  className="rounded-lg bg-red-600 px-4 py-2 font-semibold text-white transition hover:bg-red-500 disabled:opacity-50"
+                >
+                  {isDeleting ? 'Deleting…' : 'Confirm Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <TableSkeleton />
         ) : (
           <ProductViews
             products={products}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={handleDeleteRequest}
             onAddProduct={handleOpenCreate}
           />
         )}
