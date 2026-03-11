@@ -12,13 +12,13 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-900 border-b border-gray-700 px-6 py-4 flex items-center justify-between">
-      <Link href="/dashboard" className="text-xl font-bold text-indigo-400 tracking-tight">
+    <nav className="border-b border-slate-300 bg-white/90 px-6 py-4 backdrop-blur-sm flex items-center justify-between">
+      <Link href="/dashboard" className="text-xl font-bold text-slate-800 tracking-tight">
         NeonLabz Products
       </Link>
       <button
         onClick={handleLogout}
-        className="text-sm text-gray-400 hover:text-red-400 transition-colors"
+        className="text-sm text-slate-600 transition-colors hover:text-red-500"
       >
         Logout
       </button>

@@ -6,7 +6,7 @@ import { RecordsModule } from './records/records.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }), // Loads .env first, globally
+    ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     AuthModule,
     RecordsModule,

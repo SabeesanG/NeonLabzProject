@@ -24,7 +24,11 @@ export default function ProductForm({ initialData, onSubmit, onCancel }: Props) 
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (initialData) setForm(initialData);
+    if (initialData) {
+      setForm(initialData);
+      return;
+    }
+    setForm({ name: '', description: '', price: '' });
   }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -52,45 +56,45 @@ export default function ProductForm({ initialData, onSubmit, onCancel }: Props) 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-gray-800/60 border border-gray-700 rounded-2xl p-6 space-y-4"
+      className="space-y-4 rounded-2xl border border-slate-300 bg-white p-6"
     >
-      <h2 className="text-lg font-semibold text-white">
+      <h2 className="text-lg font-semibold text-slate-800">
         {isEditing ? '✏️ Edit Product' : '➕ New Product'}
       </h2>
 
       {error && (
-        <p className="text-sm text-red-400 bg-red-900/30 border border-red-700 rounded-lg px-4 py-2">
+        <p className="rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-700">
           {error}
         </p>
       )}
 
       <div>
-        <label className="block text-xs text-gray-400 mb-1 uppercase tracking-wider">Name</label>
+        <label className="mb-1 block text-xs uppercase tracking-wider text-slate-600">Name</label>
         <input
           name="name"
           value={form.name}
           onChange={handleChange}
           required
-          className="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-800 placeholder-slate-400 transition focus:outline-none focus:ring-2 focus:ring-indigo-400"
           placeholder="Product name"
         />
       </div>
 
       <div>
-        <label className="block text-xs text-gray-400 mb-1 uppercase tracking-wider">Description</label>
+        <label className="mb-1 block text-xs uppercase tracking-wider text-slate-600">Description</label>
         <textarea
           name="description"
           value={form.description}
           onChange={handleChange}
           required
           rows={3}
-          className="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
+          className="w-full resize-none rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-800 placeholder-slate-400 transition focus:outline-none focus:ring-2 focus:ring-indigo-400"
           placeholder="Product description"
         />
       </div>
 
       <div>
-        <label className="block text-xs text-gray-400 mb-1 uppercase tracking-wider">Price ($)</label>
+        <label className="mb-1 block text-xs uppercase tracking-wider text-slate-600">Price (Rs.)</label>
         <input
           name="price"
           type="number"
@@ -99,7 +103,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel }: Props) 
           value={form.price}
           onChange={handleChange}
           required
-          className="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-800 placeholder-slate-400 transition focus:outline-none focus:ring-2 focus:ring-indigo-400"
           placeholder="0.00"
         />
       </div>
@@ -108,19 +112,21 @@ export default function ProductForm({ initialData, onSubmit, onCancel }: Props) 
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white font-semibold py-2.5 rounded-lg transition-colors"
+          className="btn-primary flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 py-2.5 font-semibold text-white transition-colors hover:bg-sky-500 disabled:opacity-60"
         >
+          {loading && (
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/70 border-t-transparent" />
+          )}
           {loading ? 'Saving…' : isEditing ? 'Update Product' : 'Create Product'}
         </button>
-        {isEditing && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold py-2.5 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={loading}
+          className="flex-1 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 transition-colors hover:bg-slate-300 disabled:opacity-60"
+        >
+          Cancel
+        </button>
       </div>
     </form>
   );
