@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import ProductTable from '@/components/ProductTable';
 import { formatCurrency, formatDate } from '@/lib/format';
 
@@ -23,20 +23,8 @@ type ViewMode = 'table' | 'cards' | 'pinpoint';
 
 export default function ProductViews({ products, onEdit, onDelete, onAddProduct }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>('table');
-  const [selectedId, setSelectedId] = useState<string | null>(products[0]?.id ?? null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (products.length === 0) {
-      setSelectedId(null);
-      return;
-    }
-
-    const exists = selectedId && products.some((p) => p.id === selectedId);
-    if (!exists) {
-      setSelectedId(products[0].id);
-    }
-  }, [products, selectedId]);
 
   const selectedProduct = useMemo(
     () => products.find((p) => p.id === selectedId) ?? products[0] ?? null,
@@ -167,7 +155,7 @@ export default function ProductViews({ products, onEdit, onDelete, onAddProduct 
             {products.length === 0 ? (
               <p className="px-2 py-8 text-sm text-slate-500">No records to pinpoint yet.</p>
             ) : (
-              <div className="max-h-[520px] space-y-2 overflow-auto pr-1">
+              <div className="max-h-130 space-y-2 overflow-auto pr-1">
                 {products.map((p) => {
                   const active = p.id === selectedProduct?.id;
                   return (

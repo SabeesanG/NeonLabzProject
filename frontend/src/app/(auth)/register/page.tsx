@@ -116,7 +116,7 @@ export default function RegisterPage() {
         </div>
 
         <div
-          className="relative hidden min-h-[300px] bg-cover bg-center md:block"
+          className="relative hidden min-h-75 bg-cover bg-center md:block"
           style={{
             backgroundImage:
               "linear-gradient(rgba(2,6,23,0.28), rgba(2,6,23,0.4)), url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80')",

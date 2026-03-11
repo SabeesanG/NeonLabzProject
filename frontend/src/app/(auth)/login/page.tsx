@@ -50,7 +50,7 @@ export default function LoginPage() {
 
       <section className="animate-fade-in-up grid w-full max-w-4xl overflow-hidden rounded-sm border border-slate-300 bg-white shadow-[0_20px_45px_rgba(15,23,42,0.2)] md:grid-cols-[1.2fr_1fr]">
         <div
-          className="relative min-h-[300px] bg-cover bg-center"
+          className="relative min-h-75 bg-cover bg-center"
           style={{
             backgroundImage:
               "linear-gradient(rgba(2,6,23,0.28), rgba(2,6,23,0.4)), url('https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1400&q=80')",
@@ -121,7 +121,7 @@ export default function LoginPage() {
             </form>
 
             <p className="mt-6 text-center text-xs text-slate-500">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/register" className="font-medium text-pink-500 hover:text-pink-400">
                 Sign Up
               </Link>

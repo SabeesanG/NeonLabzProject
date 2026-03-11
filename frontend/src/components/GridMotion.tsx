@@ -62,8 +62,8 @@ export default function GridMotion({ items, gradientColor = 'black' }: GridMotio
       <div
         className={
           gradientColor === 'black'
-            ? 'absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/35'
-            : 'absolute inset-0 bg-gradient-to-b from-white/45 via-transparent to-white/45'
+            ? 'absolute inset-0 bg-linear-to-b from-black/35 via-transparent to-black/35'
+            : 'absolute inset-0 bg-linear-to-b from-white/45 via-transparent to-white/45'
         }
       />
     </div>
